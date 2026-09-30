@@ -1,0 +1,15 @@
+# Gemeinsame Python-Umgebung
+/.venv/
+
+# Python-Cachedateien
+__pycache__/
+*.py[cod]
+
+# Lokale Werkzeug-Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Temporäre Neovim-Dateien
+*.swp
+*.swo
