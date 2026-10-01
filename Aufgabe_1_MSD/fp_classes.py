@@ -22,7 +22,7 @@ class agent:
 		self.target_reward = 10.0
 		self.zero_fraction = 0.9
 
-		self.D = 0.05
+		self.D = 0.45
 		# Physikalische Einschränkung: Für ein Gitter mit Abstand a=1 und Zeitschritt τ=1
 		# ist die maximal mögliche Diffusionskonstante für ein einfaches ±1‑Schritt‑Modell
 		# D_max = a²/(2·τ) = 0.5. Ist ein größerer Wert von D gefordert, wird das Programm beendet.
@@ -40,7 +40,7 @@ class agent:
 			exit()
 	
 	
-    def random_step(self):
+	def random_step(self):
 		if np.random.rand()<self.P_diffstep:
 			self.x+=2*np.random.randint(0,2) -1
 		

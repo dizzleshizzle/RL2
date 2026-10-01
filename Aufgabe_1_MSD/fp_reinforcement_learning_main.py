@@ -32,9 +32,10 @@ for i in range(learner.N_episodes):
 		T_XPOW2_DATAPOINTS[t].append(learner.x**2)
 		
 		#AUFGABE: random_step here	
+		learner.random_step()
 
 
-exit()
+#exit()
 
 for key in T_XPOW2_DATAPOINTS.keys():
 	T_XPOW2_DATAPOINTS[key] =  np.mean(T_XPOW2_DATAPOINTS[key])
@@ -54,8 +55,10 @@ ax.set_xlabel(r"$t$")
 ax.set_ylabel(r"$\left <x^2(t) \right >$")
 plt.show()
 
-
-
+D0 = learner.D
+D1 = p[0]/2
+graf_filename = f"Aufgabe_1_MSD_{D0}_{D1}_Kunstmann_{now}.png"
+fig.savefig(graf_filename, bbox_inches='tight')
 
 exit()
 LAST_TRAJECTORY = []
@@ -116,4 +119,3 @@ for i,x in enumerate(LAST_TRAJECTORY_WITHOUT_PBJUMPS):
 	camera.snap()
 animation = camera.animate()		
 animation.save("LAST_TRAJECTORY_" + now + ".gif")
-
