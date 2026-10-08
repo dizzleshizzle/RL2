@@ -83,6 +83,17 @@ for episode in range(learner.N_episodes):
         learner.update_Q(env)
         step += 1
     steps.append(step)
+
+# Plot der Schrittzahlen pro Episode (Semilogy)
+plt.figure()
+plt.semilogy(range(len(steps)), steps, label='Steps per episode')
+plt.xlabel('Episode')
+plt.ylabel('Number of steps (log scale)')
+plt.title('Steps needed to reach the target per episode')
+plt.grid(True, which='both')
+plt.legend()
+plt.show()
+
 im_agent = plt.imread("../IMG/Lasse_head.png")
 im_treat = plt.imread("../IMG/treat.png")
 imagebox = OffsetImage(im_agent, zoom=0.02)
