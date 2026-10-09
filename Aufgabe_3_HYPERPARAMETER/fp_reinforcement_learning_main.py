@@ -13,6 +13,9 @@ now = date.today().strftime("%y-%m-%dT") + datetime.datetime.now().strftime("%H_
 env = fp_classes.environment()
 learner = fp_classes.agent(env)
 
+# Liste für das theoretische Minimum pro Episode
+min_actions = []
+
 #T_XPOW2_DATAPOINTS = dict()
 #T0 = tm.time()
 #for i in range(learner.N_episodes):
@@ -69,8 +72,16 @@ for episode in range(learner.N_episodes):
         print("------------------------------------------")
         print(f"Fortschritt: {progress}")
 
-    learner.x = env.starting_position
+    # zufällige Startposition für jede Episode
+    learner.x = np.random.randint(0, env.N_states)
     learner.chosen_action = None
+
+    # ---- minimal mögliche Schritte für diese Startposition ----
+    # Zyklischer Abstand zum Ziel
+    dist = abs(learner.x - env.target_position)
+    cyclic_dist = min(dist, env.N_states - dist)
+    # +1 für die abschließende "bleibe‑auf‑Ziel"‑Aktion
+    min_actions.append(cyclic_dist + 1)
 
     step = 0
     while (learner.x != env.target_position) or learner.chosen_action != 1:
@@ -84,12 +95,13 @@ for episode in range(learner.N_episodes):
         step += 1
     steps.append(step)
 
-# Plot der Schrittzahlen pro Episode (Semilogy)
+# Plot des Verhältnisses von ausgeführten Schritten zur minimal möglichen Schrittzahl (Semilogy)
+ratio = np.array(steps) / np.array(min_actions)
 plt.figure()
-plt.semilogy(range(len(steps)), steps, label='Steps per episode')
+plt.semilogy(range(len(ratio)), ratio, label='Steps / Minimal steps')
 plt.xlabel('Episode')
-plt.ylabel('Number of steps (log scale)')
-plt.title('Steps needed to reach the target per episode')
+plt.ylabel('Verhältnis (log scale)')
+plt.title('Verhältnis ausgeführte Schritte zu minimalen Schritten')
 plt.grid(True, which='both')
 plt.legend()
 plt.show()
