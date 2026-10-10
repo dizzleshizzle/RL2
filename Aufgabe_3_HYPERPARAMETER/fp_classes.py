@@ -16,7 +16,7 @@ class agent:
         
         self.x = 1
         self.Q = np.zeros((env_.N_states,3))
-        self.alpha = 0.01
+        self.alpha = 0.999999   #0.01
         self.gamma = 0.9
         self.epsilon = 1.0
         self.target_reward = 10.0

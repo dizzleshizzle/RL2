@@ -13,8 +13,6 @@ now = date.today().strftime("%y-%m-%dT") + datetime.datetime.now().strftime("%H_
 env = fp_classes.environment()
 learner = fp_classes.agent(env)
 
-# Liste für das theoretische Minimum pro Episode
-min_actions = []
 
 #T_XPOW2_DATAPOINTS = dict()
 #T0 = tm.time()
@@ -66,21 +64,22 @@ min_actions = []
 #exit()
 LAST_TRAJECTORY = []
 steps = []
+min_actions = []
 for episode in range(learner.N_episodes):
     if ((episode%(learner.N_episodes//100)) == 0) and episode:
         progress = 1.*episode/learner.N_episodes
         print("------------------------------------------")
         print(f"Fortschritt: {progress}")
 
-    # zufällige Startposition für jede Episode
+    # zufaellige startposition für jede episode
     learner.x = np.random.randint(0, env.N_states)
     learner.chosen_action = None
 
-    # ---- minimal mögliche Schritte für diese Startposition ----
-    # Zyklischer Abstand zum Ziel
+    # minimal moegliche schritte für diese startposition
+    # zyklischer abstand zum ziel
     dist = abs(learner.x - env.target_position)
     cyclic_dist = min(dist, env.N_states - dist)
-    # +1 für die abschließende "bleibe‑auf‑Ziel"‑Aktion
+    # +1 für die abschließende "bleibe‑auf‑ziel"‑aktion
     min_actions.append(cyclic_dist + 1)
 
     step = 0
@@ -95,15 +94,17 @@ for episode in range(learner.N_episodes):
         step += 1
     steps.append(step)
 
-# Plot des Verhältnisses von ausgeführten Schritten zur minimal möglichen Schrittzahl (Semilogy)
 ratio = np.array(steps) / np.array(min_actions)
-plt.figure()
+plt.rcParams.update({"font.size": 12})
+fig = plt.figure(figsize=(8, 5), layout="constrained")
 plt.semilogy(range(len(ratio)), ratio, label='Steps / Minimal steps')
 plt.xlabel('Episode')
 plt.ylabel('Verhältnis (log scale)')
 plt.title('Verhältnis ausgeführte Schritte zu minimalen Schritten')
 plt.grid(True, which='both')
 plt.legend()
+graf_filename = f"Aufgabe_3_HYPERPARAMETER_stepVergleich_a0.999{now}.png"
+fig.savefig(graf_filename, dpi=150, bbox_inches=None)
 plt.show()
 
 im_agent = plt.imread("../IMG/Lasse_head.png")
