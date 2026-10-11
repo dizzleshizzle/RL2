@@ -103,7 +103,8 @@ plt.ylabel('Verhältnis (log scale)')
 plt.title('Verhältnis ausgeführte Schritte zu minimalen Schritten')
 plt.grid(True, which='both')
 plt.legend()
-graf_filename = f"Aufgabe_3_HYPERPARAMETER_stepVergleich_a0.999{now}.png"
+graf_filename = f"Aufgabe_3_HYPERPARAMETER_stepVergleich_a0.999999_e500{now}.png"
+#graf_filename = f"Aufgabe_3_HYPERPARAMETER_stepVergleich_a1{now}.png"
 fig.savefig(graf_filename, dpi=150, bbox_inches=None)
 plt.show()
 

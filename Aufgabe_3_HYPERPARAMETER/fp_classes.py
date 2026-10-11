@@ -11,12 +11,12 @@ class environment:
     
 class agent:
     def __init__(self,env_):
-        self.N_episodes = 10000       #10000
+        self.N_episodes = 500       #10000
         self.tmax_MSD = 100
         
         self.x = 1
         self.Q = np.zeros((env_.N_states,3))
-        self.alpha = 0.999999   #0.01
+        self.alpha = 0.999999 #0.01
         self.gamma = 0.9
         self.epsilon = 1.0
         self.target_reward = 10.0
