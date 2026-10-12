@@ -16,13 +16,13 @@ class agent:
         
         self.x = 1
         self.Q = np.zeros((env_.N_states,3))
-        self.alpha = 0.999999 #0.01
+        self.alpha = 0.01
         self.gamma = 0.9
         self.epsilon = 1.0
         self.target_reward = 10.0
         self.zero_fraction = 0.9
 
-        self.D = 0  #0.125
+        self.D = 0.125
         if self.D > 0.5:
             print(f"Diffusionskonstante D={self.D} überschreitet den Maximalwert 0.5 für die gewählte Schrittgröße. Wähle ein kleineres D.")
             exit()
