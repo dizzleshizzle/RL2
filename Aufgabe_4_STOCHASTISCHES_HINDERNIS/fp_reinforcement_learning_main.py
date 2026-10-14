@@ -63,8 +63,9 @@ now = date.today().strftime("%y-%m-%dT") + datetime.datetime.now().strftime("%H_
 LAST_TRAJECTORY = []
 steps = []
 min_actions = []
-P_obstacle_values = np.linspace(0.7, 0.8, num=21)
+P_obstacle_values = np.linspace(0.75, 0.8, num=21)
 kappas = []
+displacements = []
 for p_obs in P_obstacle_values:
     env = fp_classes.environment()
     env.P_obstacle = p_obs
@@ -105,12 +106,14 @@ for p_obs in P_obstacle_values:
 
     kappa = total_action_displacement/np.abs(total_action_displacement)
     kappas.append(kappa)
+    displacements.append(total_action_displacement)
     print(f"Kappa: {kappa}")
 
 
 plt.rcParams.update({"font.size": 12})
 fig = plt.figure(figsize=(8, 5), layout="constrained")
 plt.plot(P_obstacle_values, kappas, marker='o', linestyle='-', color='b', label=r'Gemessenes $\kappa$')
+#plt.plot(P_obstacle_values, displacements, marker='x', linestyle='-', color='r', label=r'total action displacement')
 
 plt.title(r'Bestimmung des Übergangs: $\kappa$ als Funktion von $P_{obstacle}$', fontsize=12)
 plt.xlabel('$P_{obstacle}$ (Wahrscheinlichkeit für Hindernis)', fontsize=11)
@@ -119,6 +122,8 @@ plt.ylabel(r'$\kappa$ (Übergangsparameter)', fontsize=11)
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.legend()
 
+graf_filename = f"Aufgabe_4_STOCHASTISCHES_HINDERNIS{now}.png"
+fig.savefig(graf_filename, dpi=150, bbox_inches=None)
 plt.show()
 
 
@@ -168,13 +173,9 @@ for i,x in enumerate(LAST_TRAJECTORY_WITHOUT_PBJUMPS):
     trajax.plot(np.array(LAST_TRAJECTORY_WITHOUT_PBJUMPS)[:i],np.linspace(0,0,len(np.array(LAST_TRAJECTORY_WITHOUT_PBJUMPS)[:i])),color="blue") 
     ab = AnnotationBbox(imagebox2, (env.target_position, 0.0),frameon=False)
     trajax.add_artist(ab)
-    if x:
-        ab = AnnotationBbox(imagebox, (x, 0.0),frameon=False)
-        #trajax.add_artist(ab)
-    else:
-        ab = AnnotationBbox(imagebox, (LAST_TRAJECTORY_WITHOUT_PBJUMPS[i+1], 0.0),frameon=False)
-    trajax.add_artist(ab)
-            
+    if x is not None:
+        ab = AnnotationBbox(imagebox, (x, 0.0), frameon=False)
+        trajax.add_artist(ab)            
 
     trajax.set_xlim(0.0,env.N_states)
     trajax.set_ylim(-1.0,1.0)
