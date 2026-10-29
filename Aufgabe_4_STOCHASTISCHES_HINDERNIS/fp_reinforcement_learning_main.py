@@ -63,14 +63,19 @@ now = date.today().strftime("%y-%m-%dT") + datetime.datetime.now().strftime("%H_
 LAST_TRAJECTORY = []
 steps = []
 min_actions = []
-P_obstacle_values = np.linspace(0.75, 0.8, num=21)
+P_obstacle_values = np.linspace(0, 1, num=21)
 kappas = []
 displacements = []
+mean_steps_values = []
+std_steps_values = []
+seed = 0
 for p_obs in P_obstacle_values:
+    np.random.seed(seed)
     env = fp_classes.environment()
     env.P_obstacle = p_obs
     learner = fp_classes.agent(env)
     total_action_displacement = 0
+    evaluation_steps = []
     for episode in range(learner.N_episodes):
         if ((episode%(learner.N_episodes//100)) == 0) and episode:
             progress = 1.*episode/learner.N_episodes
@@ -103,12 +108,21 @@ for p_obs in P_obstacle_values:
             learner.update_Q(env)
             step += 1
         steps.append(step)
+        if learner.epsilon == 0:
+            evaluation_steps.append(step)
 
     kappa = total_action_displacement/np.abs(total_action_displacement)
     kappas.append(kappa)
     displacements.append(total_action_displacement)
     print(f"Kappa: {kappa}")
+    mean_steps = np.mean(evaluation_steps)
+    std_steps = np.std(evaluation_steps)
+    mean_steps_values.append(mean_steps)
+    std_steps_values.append(std_steps)
 
+    print(f"P={p_obs:.4f}: Schritte={mean_steps:.2f}, "
+      f"Standardabweichung={std_steps:.2f}, "
+      f"ausgewertete Episoden={len(evaluation_steps)}")
 
 plt.rcParams.update({"font.size": 12})
 fig = plt.figure(figsize=(8, 5), layout="constrained")
@@ -124,6 +138,39 @@ plt.legend()
 
 graf_filename = f"Aufgabe_4_STOCHASTISCHES_HINDERNIS{now}.png"
 fig.savefig(graf_filename, dpi=150, bbox_inches=None)
+
+#       plot schritte vs P_obstacle_values
+fig_steps = plt.figure(figsize=(8, 5), layout="constrained")
+
+plt.errorbar(
+    P_obstacle_values,
+    mean_steps_values,
+    yerr=std_steps_values,
+    fmt="o-",
+    capsize=4,
+    label="Mittelwert ± Standardabweichung"
+)
+
+plt.xlabel(r"$P_{\mathrm{obstacle}}$")
+plt.ylabel("Schritte pro Episode")
+plt.title(rf"Schrittzahl ohne Exploration ($\alpha={learner.alpha}$)")
+plt.grid(True, linestyle="--", alpha=0.7)
+plt.legend()
+
+fig_steps.savefig(
+    f"Aufgabe_4_Schrittzahlen_a{learner.alpha}_{now}.png",
+    dpi=150
+)
+
+np.savetxt(
+    f"Aufgabe_4_Schrittzahlen_a{learner.alpha}_seed{seed}_{now}.txt",
+    np.column_stack((
+        P_obstacle_values,
+        mean_steps_values,
+        std_steps_values
+    )),
+    header="P_obstacle mean_steps std_steps"
+)
 plt.show()
 
 
